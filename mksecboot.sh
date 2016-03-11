@@ -10,13 +10,19 @@ GRUB2_REPO_BRANCH="master"
 GRUB2_MODULES="acpi ahci ata cbfs boot configfile disk gzio halt linux linux16
 loadenv msdospart part_msdos probe ext2 scsi search_fs_file
 search_fs_uuid search_label search serial squash4 ehci usb verify
-xzio memdisk ohci uhci nativedisk serial"
+xzio memdisk ohci uhci nativedisk serial gfxmenu gfxterm_menu"
 COREBOOT_REPO_URL="https://review.coreboot.org/p/coreboot.git"
 COREBOOT_REPO_BRANCH="master"
 MAKE_ARGS="-j8"
 
+##
+# Isoburn package is needed to do this job.
+##
+
 mkdir "${TMP_DIR}"
 mkdir "${DOWNLOAD_DIR}"
+
+cp "${FIRMWARE_PATH}" "${TMP_DIR}/firmware.bin"
 
 if [ ! -d "${DOWNLOAD_DIR}/grub" ] ; then
   cd "${DOWNLOAD_DIR}"
@@ -49,21 +55,21 @@ cp -a cbfstool fmaptool rmodtool "${TMP_DIR}/bin/"
 # Add grub2.elf as payload for the firmware image and generate standalone grub for coreboot as payload
 cd "${ROOT}"
 
-"${TMP_DIR}/bin/grub-mkstandalone" --format i386-coreboot --compress=xz \
+"${TMP_DIR}/bin/grub-mkstandalone" --compress=xz \
     --install-modules="${GRUB2_MODULES}" --verbose \
     --modules="${GRUB2_MODULES}" \
-    --output "${TMP_DIR}/grub2.elf" \
+    --output "${TMP_DIR}/grub2.dsk" \
     --fonts= --themes= --locales= \
-    /boot/grub/grub.cfg="${CONFIG_DIR}/grub.cfg" \
-    /memdisk/boot.pub="${CONFIG_DIR}/boot.pub"
+    --pubkey="${CONFIG_DIR}/boot.pub" \
+    --format i386-coreboot
 
 echo "--------------------------OLD--------------------------"
-"${TMP_DIR}/bin/cbfstool" "${FIRMWARE_PATH}" print
+"${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" print
 echo "-------------------------------------------------------"
 
-"${TMP_DIR}/bin/cbfstool" "${FIRMWARE_PATH}" remove -n img/grub
-"${TMP_DIR}/bin/cbfstool" "${FIRMWARE_PATH}" add-payload -f "${TMP_DIR}/grub2.elf" -n img/grub
+"${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" add -f "${CONFIG_DIR}/grub.cfg" -n etc/grub.cfg -t raw
+"${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" add-payload -f "${TMP_DIR}/grub2.dsk" -n img/secboot
 
 echo "--------------------------NEW--------------------------"
-"${TMP_DIR}/bin/cbfstool" "${FIRMWARE_PATH}" print
+"${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" print
 echo "-------------------------------------------------------"
