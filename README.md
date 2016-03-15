@@ -7,7 +7,9 @@ the Firmware this is the way to go if you want to build  a secureboot or to use 
 
 ## SecureBoot
 
-
+<p align="center">
+  <img src="" />
+</p>
 
 ## Customization
 
@@ -71,15 +73,15 @@ Please specify how long the key should be valid.
       <n>w = key expires in n weeks
       <n>m = key expires in n months
       <n>y = key expires in n years
-Key is valid for? (0) 
+Key is valid for? (0)
 Key does not expire at all
 Is this correct? (y/N) y
 
 GnuPG needs to construct a user ID to identify your key.
 
 Real name: Max Mustermann
-Email address: 
-Comment: 
+Email address:
+Comment:
 You selected this USER-ID:
     "Max Mustermann"
 ```
@@ -98,7 +100,7 @@ for file in /boot/* ; do if [ ! -d "${file}" ] ; then gpg -u gpg_key_id --detach
 
 ### Adding GRUB2 modules
 
-If you want to change the grub2 module list for pxe boot, lvm and so on. Take a look at the mksecboot.sh script env variable 
+If you want to change the grub2 module list for pxe boot, lvm and so on. Take a look at the mksecboot.sh script env variable
 GRUB_MODULES and just add them there.
 
 ## Usage
@@ -108,4 +110,3 @@ Finally let's build the coreboot image based on a specific apu2 firmware:
 ```bash
 ./mksecboot.sh firmware/*.rom
 ```
-
