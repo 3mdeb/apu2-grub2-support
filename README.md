@@ -96,6 +96,14 @@ for file in /boot/* ; do if [ ! -d "${file}" ] ; then gpg -u gpg_key_id --detach
 
 If you want to change the grub2 module list for pxe boot, lvm and so on. Take a look at the mksecboot.sh script env variable GRUB_MODULES and just add them there. The maximum size of the grub2 payload can be 2.5MB !
 
+## Dependencies
+
+The build script needs some dependencies to proceed with compilation:
+
+```bash
+sudo apt-get install xorriso git build-essential autoconf automake libdevmapper-dev liblzma-dev
+```
+
 ## Usage
 
 Finally let's build the coreboot image based on a specific apu2 firmware:
