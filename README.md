@@ -5,11 +5,17 @@ With the support of grub2 it is possible to build a secureboot for the apu2 plat
 As long as the coreboot community and vendor doesn't provide a running and functional OpenSource version of
 the Firmware this is the way to go if you want to build  a secureboot or to use grub2 specific features.
 
-## SecureBoot
+## APU2 SecureBoot
 
 <p align="center">
-  <img src="" />
+  <img src="https://raw.githubusercontent.com/9elements/apu2-grub2-support/master/doc/overview.png" />
 </p>
+
+The whole Seabios and GRUB2 configuration and modules are embedded into the coreboot flash itself. This feature can protect against software attacks by using setting the write protect bits via flashrom and shorting jumper2 pins (1 and 2). Take a look at the [PC Engines APU2 manual](http://pcengines.ch/pdf/apu2.pdf)
+
+## Seabios
+
+The Seabios is replaced by the up-to-date version (1.9.1) and configured so that no input and loading mechanism are used. In short keyboard, mouse input is disabled. All drive detection features are stripped out of seabios which are not necessary. The bootorder is fused to the grub2 floppyimg itself. The menu is completly disabled so that no input and modification can be done. For further information take a look at the [Seabios configuration](https://github.com/9elements/apu2-grub2-support/blob/master/config/seabios.cfg)
 
 ## Customization
 
@@ -17,29 +23,17 @@ First of all the [GRUB2 Configuration](https://github.com/9elements/apu2-grub2-s
 
 ```bash
 set default="0"
-set timeout="5"
+set timeout="0"
 
-menuentry "OpenWrt" {
-	insmod part_msdos
-	insmod squash4
-	insmod ext2
-	insmod gcry_sha512
-	insmod gcry_rsa
+menuentry "OpenWrt" --unrestricted {
 	set root='(hd1,msdos1)'
-	verify_detached -s /boot/vmlinuz /boot/vmlinuz.sig
 
-	linux /boot/vmlinuz root=/dev/mmcblk0p2 rootfstype=ext4 rootwait console=tty0 console=ttyS0,115200n8 noinitrd
+	linux /boot/vmlinuz block2mtd.block2mtd=/dev/mmcblk0p2,65536,rootfs,5 root=/dev/mtdblock0 rootfstype=squashfs rootwait console=tty0 console=ttyS0,115200n8 noinitrd
 }
-menuentry "OpenWrt (failsafe)" {
-	insmod part_msdos
-	insmod squash4
-	insmod ext2
-	insmod gcry_sha512
-	insmod gcry_rsa
+menuentry "OpenWrt (failsafe)" --unrestricted {
 	set root='(hd1,msdos1)'
-	verify_detached -s /boot/vmlinuz /boot/vmlinuz.sig
 
-	linux /boot/vmlinuz failsafe=true root=/dev/mmcblk0p2 rootfstype=ext4 rootwait console=tty0 console=ttyS0,115200n8 noinitrd
+	linux /boot/vmlinuz failsafe=true block2mtd.block2mtd=/dev/mmcblk0p2,65536,rootfs,5 root=/dev/mtdblock0 rootfstype=squashfs rootwait console=tty0 console=ttyS0,115200n8 noinitrd
 }
 ```
 
@@ -100,8 +94,7 @@ for file in /boot/* ; do if [ ! -d "${file}" ] ; then gpg -u gpg_key_id --detach
 
 ### Adding GRUB2 modules
 
-If you want to change the grub2 module list for pxe boot, lvm and so on. Take a look at the mksecboot.sh script env variable
-GRUB_MODULES and just add them there.
+If you want to change the grub2 module list for pxe boot, lvm and so on. Take a look at the mksecboot.sh script env variable GRUB_MODULES and just add them there. The maximum size of the grub2 payload can be 2.5MB !
 
 ## Usage
 

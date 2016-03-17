@@ -9,10 +9,15 @@ GRUB2_REPO_URL="https://github.com/dweeezil/grub.git"
 GRUB2_REPO_BRANCH="master"
 COREBOOT_REPO_URL="https://review.coreboot.org/p/coreboot.git"
 COREBOOT_REPO_BRANCH="master"
-GRUB2_APU2_MODULES_BASE="cbmemc cbfs cbls ls usb usbms ohci ehci uhci pata verify
-serial gfxmenu gfxterm configfile halt reboot pci password_pbkdf2 gcry_rsa gcry_sha512
-gcry_sha256 normal romfs biosdisk boot chain"
-GRUB2_MODULES="${GRUB2_APU2_MODULES_BASE} squash4 ext2 part_msdos linux search"
+GRUB2_APU2_MODULES_BASE="
+part_msdos
+squash4
+ext2
+normal
+linux
+boot
+"
+GRUB2_MODULES="${GRUB2_APU2_MODULES_BASE}"
 SEABIOS_REPO_URL="git://git.seabios.org/seabios.git"
 SEABIOS_REPO_BRANCH="rel-1.9.1"
 MAKE_ARGS="-j8"
@@ -71,7 +76,6 @@ cd "${ROOT}"
 
 "${TMP_DIR}/bin/grub-mkrescue" --compress=xz \
     --modules="${GRUB2_MODULES}" \
-    --install-modules="${GRUB2_MODULES}" \
     --output "${TMP_DIR}/grub2.dsk.tmp" \
     --fonts= --themes= --locales= \
     --pubkey="${CONFIG_DIR}/boot.pub" \
@@ -98,6 +102,7 @@ echo "-------------------------------------------------------"
 
 "${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" remove -n img/setup
 "${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" remove -n img/memtest
+"${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" remove -n genroms/pxe.rom
 
 "${TMP_DIR}/bin/cbfstool" "${TMP_DIR}/firmware.bin" add -f "${TMP_DIR}/grub2.dsk" -n floppyimg/grub2.lzma -t raw -c lzma
 
