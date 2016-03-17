@@ -111,3 +111,5 @@ Finally let's build the coreboot image based on a specific apu2 firmware:
 ```bash
 ./mksecboot.sh firmware/*.rom
 ```
+
+The final image can be found under tmp/firmware.bin .
