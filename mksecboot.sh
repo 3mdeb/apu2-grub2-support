@@ -16,6 +16,9 @@ ext2
 normal
 linux
 boot
+pbkdf2
+password
+password_pbkdf2
 "
 GRUB2_MODULES="${GRUB2_APU2_MODULES_BASE}"
 SEABIOS_REPO_URL="git://git.seabios.org/seabios.git"

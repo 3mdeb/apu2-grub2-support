@@ -37,10 +37,10 @@ menuentry "OpenWrt (failsafe)" --unrestricted {
 }
 ```
 
-Also change the password "__c2yXVNGZAF81KGUvY9wS36wGG__" which protects the grub2 configuration from modification
+Also change the password "__password_pbkdf2 root grub.pbkdf2.sha512.10000.c2yXVNGZAF81KGUvY9wS36wGG__" which protects the grub2 configuration from modification with the following command:
 
 ```bash
-password_pbkdf2 root grub.pbkdf2.sha512.10000.c2yXVNGZAF81KGUvY9wS36wGG
+./tmp/bin/grub2-mkpasswd-pbkdf2
 ```
 
 In order to add your SecureBoot publickey please generate a new gpg key for signing only:
