@@ -2,8 +2,6 @@
 
 This bash script strips and modifies a apu2 firmware with a current seabios version and grub2 payload.
 With the support of grub2 it is possible to build a secureboot for the apu2 platform.
-As long as the coreboot community and vendor doesn't provide a running and functional OpenSource version of
-the Firmware this is the way to go if you want to build  a secureboot or to use grub2 specific features.
 
 ## APU2 SecureBoot
 
